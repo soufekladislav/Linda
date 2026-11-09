@@ -1,0 +1,9 @@
+Options -Indexes
+<FilesMatch "^\.env$">
+    Require all denied
+</FilesMatch>
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home2/lauhannq/socialmedia.freshcrackers.cz"
+PassengerBaseURI "/"
+PassengerPython "/home2/lauhannq/virtualenv/socialmedia.freshcrackers.cz/3.11/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END

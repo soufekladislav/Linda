@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title }} | Fresh AI Social</title>
+  <link rel="icon" type="image/png" href="https://www.freshcrackers.cz/wp-content/uploads/2023/10/icon-FC.png">
+  <link rel="apple-touch-icon" href="https://www.freshcrackers.cz/wp-content/uploads/2023/10/icon-FC.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/app.css?v={{ app_version }}">
+  <link rel="stylesheet" href="/assets/css/ux042.css?v={{ app_version }}">
+  <link rel="stylesheet" href="/assets/css/ux045.css?v={{ app_version }}">
+  <link rel="stylesheet" href="/assets/css/ux046.css?v={{ app_version }}">
+</head>
+<body class="{{ 'auth-page042' if not user else 'workspace-page042' }} page-{{ current_page }}" data-status-poll="{{ '1' if user else '0' }}" data-current-project="{{ current_project_id or 0 }}">
+{% if user %}
+<div class="app app042">
+  <aside class="sidebar sidebar042" id="appSidebar">
+    <div class="brand brand042 brand043"><div class="logo app-logo linda-brand-avatar043"><img src="{{ linda_image }}" alt="Linda"></div><div><strong>Linda</strong><small>Fresh AI Social · AI Social Media Specialist</small></div></div>
+    <div class="project-switch042"><span class="project-switch-label042">Projekt</span>{% if project_options_global %}<select data-project-switch aria-label="Vybrat projekt">{% for p in project_options_global %}<option value="{{ p.id }}" {{ 'selected' if p.id == current_project_id else '' }}>{{ p.name }}</option>{% endfor %}</select><a href="?page=projects" class="project-manage042">Spravovat projekty</a>{% else %}<a class="btn small" href="?page=projects&new=1">+ Založit projekt</a>{% endif %}</div>
+    {% if current_project %}<nav class="project-nav042" aria-label="Projektové menu">{% for key,label in project_nav %}<a href="?page={{ key }}&project_id={{ current_project_id }}" class="{{ 'active' if current_page == key else '' }}"><span class="nav-dot042"></span><span>{{ label }}</span>{% if key == 'content' and approval_count is defined and approval_count %}<b class="nav-count042">{{ approval_count }}</b>{% endif %}</a>{% endfor %}</nav>{% endif %}
+    <div class="sidebar-separator042"></div>
+    <nav class="global-nav042" aria-label="Globální menu"><a href="?page=projects" class="{{ 'active' if current_page == 'projects' else '' }}">Projekty</a><a href="?page=settings{% if current_project_id %}&project_id={{ current_project_id }}{% endif %}" class="{{ 'active' if current_page in ['settings','account','connectors','knowledge','references','notifications','project_setup'] else '' }}">Nastavení</a>{% if user.role == 'superadmin' %}<a href="?page=admin" class="{{ 'active' if current_page == 'admin' else '' }}">Admin konzole</a>{% endif %}</nav>
+    <div class="sidebar-footer373 sidebar-footer042"><a class="{{ 'active' if current_page == 'about' else '' }}" href="?page=about">ⓘ O aplikaci</a><small>Fresh Crackers · v{{ app_version }}</small></div>
+  </aside>
+  <button type="button" class="sidebar-backdrop045" data-menu-backdrop aria-label="Zavřít menu" tabindex="-1"></button>
+  <main class="main main042">
+    <header class="top top042"><div class="top-left042"><button type="button" class="menu-toggle" data-menu-toggle aria-label="Otevřít menu">☰</button><div><h1>{{ title }}</h1>{% if current_project %}<small>{{ current_project.name }}{% if current_project.website_url %} · {{ current_project.website_url|replace('https://','')|replace('http://','') }}{% endif %}</small>{% endif %}</div></div><div class="top-actions37 top-actions042"><a class="work-indicator37 {{ 'working' if work_count else 'idle' }}" data-work-indicator href="?page=queue"><span class="work-pulse37"></span><b data-work-label>Fronta úloh{% if work_count %} · {{ work_count }}{% endif %}</b><small data-work-progress></small></a><details class="notification-menu37" data-notification-menu><summary aria-label="Upozornění">🔔<span class="notification-count37 {{ '' if unread_count else 'hidden' }}" data-notification-count>{{ unread_count }}</span></summary><div class="notification-panel37"><header><b>Upozornění</b><a href="?page=notifications">Zobrazit vše</a></header><div class="notification-preview046" data-notification-preview>{% for n in notification_preview %}<a href="{{ n.action_url or '?page=notifications' }}" class="notification-item046 {{ n.level or 'info' }}"><strong>{{ n.title }}</strong><span>{{ n.message }}</span><small>{{ n.created_at }}</small></a>{% else %}<div class="notification-empty046">Zatím žádná upozornění.</div>{% endfor %}</div></div></details><details class="user-menu"><summary class="user user-link">{{ user.name }} <span class="caret">▾</span></summary><div class="user-menu-panel"><a href="?page=account">Můj účet</a>{% if user.role == 'superadmin' %}<a href="?page=admin">Admin konzole</a>{% endif %}{% if user.role in ['admin','superadmin'] %}<a href="?page=diagnostics">Diagnostika</a>{% endif %}<a href="?page=logout" class="danger">Odhlásit</a></div></details></div></header>
+    <section class="content content042">
+      {% if actor_user %}<div class="impersonation-banner">Jsi přepnutý do účtu <b>{{ user.name }}</b>. <a href="?page=stop_impersonate">Vrátit se jako {{ actor_user.name }}</a></div>{% endif %}
+      {% if flash %}<div class="flash flash042">{{ flash }}</div>{% endif %}
+{% else %}
+  {% if flash %}<div class="auth-flash042">{{ flash }}</div>{% endif %}
+{% endif %}
+
+{% block content %}{% endblock %}
+
+{% if user %}
+    </section>
+  </main>
+</div>
+<div id="toastStack37" class="toast-stack37"></div>
+{% endif %}
+<script src="/assets/js/app.js?v={{ app_version }}"></script>
+<script src="/assets/js/ux042.js?v={{ app_version }}"></script>
+<script src="/assets/js/ux046.js?v={{ app_version }}"></script>
+</body>
+</html>

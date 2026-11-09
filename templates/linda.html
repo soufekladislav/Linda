@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="calendar-toolbar"><div><span class="pill light">Nová aktivita</span><h2>Od obchodního cíle ke komunikaci</h2><p class="muted">Linda nejdřív hledá konverzní cíl a webovou destinaci. Až potom plánuje článek, média a jednotlivé sítě.</p></div><a class="btn small secondary" href="?page=dashboard&project_id={{ selected_project }}">Zpět do chatu</a></div>
+  <form method="post" data-background-job="1" class="friendly-form">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="hidden" name="project_id" value="{{ selected_project }}">
+    <div class="form-grid">
+      <label>Konverzní cesta<select name="workflow_key"><option value="">Linda vybere podle zadání</option>{% for w in workflows if w.enabled %}<option value="{{ w.key }}">{{ w.label }} — {{ w.description }}</option>{% endfor %}</select></label>
+      <label>Rozsah práce<select name="mode"><option value="campaign">Kampaň / prodejní aktivita</option><option value="next_period">Navázat na další období</option><option value="quick_post">Rychlý obsah bez nového článku</option></select></label>
+    </div>
+    <label>Co chceme prodat nebo zlepšit?<textarea name="brief" rows="7" data-voice-input placeholder="Např. Potřebujeme zvýšit poptávky na rekonstrukce koupelen. Najdi vhodné stránky a produkty na webu. Pokud chybí vhodný obsah, navrhni článek s interními odkazy a CTA a potom jeho distribuci na připojené sítě." required></textarea></label>
+    <div class="quick-actions"><button class="pink">Nechat Lindu připravit plán</button><a class="btn secondary" href="?page=knowledge&project_id={{ selected_project }}">Zkontrolovat znalosti webu</a></div>
+  </form>
+</section>
+<section class="card"><h2>Konverzní cesty dostupné Lindě</h2><div class="workflow-admin042">{% for w in workflows if w.enabled %}<div class="card"><h3>{{ w.label }}</h3><p class="muted">{{ w.description }}</p><small>{{ w.rules }}</small></div>{% endfor %}</div></section>
+{% endblock %}

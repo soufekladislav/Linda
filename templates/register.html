@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-shell042">
+  <section class="auth-story042">
+    <div class="auth-brand042 auth-brand043">
+      <img src="{{ linda_image }}" alt="Linda">
+      <div><strong>Linda · Fresh AI Social</strong><small>AI Social Media Specialist od Fresh Crackers</small></div>
+    </div>
+    <div class="auth-message042 auth-message043">
+      <div class="auth-linda-visual043"><img src="{{ linda_image }}" alt="Linda · AI Social Media Specialist"></div>
+      <span class="auth-kicker042">Začni projektem</span>
+      <h1>Web je zdroj. Sítě jsou <span class="pink-word">distribuce.</span></h1>
+      <p>Po registraci vytvoříš projekt, připojíš Fresh Core a sociální sítě. Linda načte web a začne plánovat komunikaci kolem skutečné nabídky, článků a konverzních cílů.</p>
+      <div class="auth-paths042"><span>Produkty</span><span>Články</span><span>CTA</span><span>Sociální sítě</span><span>Analytika</span></div>
+    </div>
+    <div class="auth-foot042">Fresh Crackers · Linda {{ app_version }}</div>
+  </section>
+  <section class="auth-panel042">
+    <div class="auth-card042">
+      <div class="auth-card-linda043"><img src="{{ linda_image }}" alt="Linda"><span>Linda</span></div>
+      <span class="eyebrow">Nový účet</span>
+      <h2>Začít s Lindou</h2>
+      <p>Účet je osobní. Projekty a jejich kontext zůstávají oddělené.</p>
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <label>Jméno<input name="name" autocomplete="name" required></label>
+        <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
+        <label>Heslo<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <label>Heslo znovu<input name="password2" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button type="submit">Vytvořit účet</button>
+      </form>
+      <p class="auth-switch042">Už účet máš? <a href="?page=login"><b>Přihlásit se</b></a></p>
+    </div>
+  </section>
+</div>
+{% endblock %}

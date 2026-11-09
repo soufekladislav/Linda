@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-shell042">
+  <section class="auth-story042">
+    <div class="auth-brand042 auth-brand043">
+      <img src="{{ linda_image }}" alt="Linda">
+      <div><strong>Linda · Fresh AI Social</strong><small>AI Social Media Specialist od Fresh Crackers</small></div>
+    </div>
+    <div class="auth-message042 auth-message043">
+      <div class="auth-linda-visual043"><img src="{{ linda_image }}" alt="Linda · AI Social Media Specialist"></div>
+      <span class="auth-kicker042">Fresh Crackers · AI coworker</span>
+      <h1>Linda plánuje marketing, který vede <span class="pink-word">zpátky k prodeji.</span></h1>
+      <p>Linda zná projekt, web, produkty i obsah. Pomůže naplánovat článek, sociální komunikaci a publikaci tak, aby každý výstup měl <strong>jasný cíl a cestu ke konverzi</strong>.</p>
+      <div class="auth-paths042"><span>Projektový kontext</span><span>Fresh Core</span><span>Konverzní plán</span><span>Kalendář sítí</span><span>AI Engine</span></div>
+    </div>
+    <div class="auth-foot042">Fresh Crackers · Linda {{ app_version }}</div>
+  </section>
+  <section class="auth-panel042">
+    <div class="auth-card042">
+      <div class="auth-card-linda043"><img src="{{ linda_image }}" alt="Linda"><span>Linda</span></div>
+      <span class="eyebrow">Přihlášení do Lindy</span>
+      <h2>Vítej zpět</h2>
+      <p>Pokračuj v projektu přesně tam, kde jste s Lindou skončili.</p>
+      {% if fresh_key_ready %}<a class="btn" href="?page=fresh_key_login" style="display:block;text-align:center;margin:10px 0 16px">Přihlásit jedním tlačítkem přes Fresh Key</a><div class="auth-switch042" style="margin:0 0 12px">nebo použij původní Linda účet</div>{% endif %}
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <label>E-mail<input name="email" type="email" autocomplete="email" required autofocus></label>
+        <label>Heslo<input name="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">Přihlásit se</button>
+      </form>
+      {% if registration_mode != 'closed' %}<p class="auth-switch042">Nemáš účet? <a href="?page=register"><b>Vytvořit účet</b></a></p>{% endif %}
+      <div class="auth-security042"><span>●</span><span>AI požadavky jdou přes Fresh AI Engine. Přímé provider klíče Linda nepotřebuje.</span></div>
+    </div>
+  </section>
+</div>
+{% endblock %}

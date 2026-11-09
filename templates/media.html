@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-width046">
+<section class="page-head045">
+  <div><span class="pill light">Knihovna projektu</span><h2>Média</h2><p>Obrázky a videa, které Linda používá v obsahu. Nové soubory se při nahrání automaticky optimalizují.</p></div>
+  <a class="btn small" href="?page=dashboard&project_id={{ selected_project }}">Vytvořit s Lindou</a>
+</section>
+<section class="upload-bar045">
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="upload"><input type="hidden" name="project_id" value="{{ selected_project }}">
+    <input name="title" placeholder="Název média (volitelné)">
+    <input type="file" name="file" accept="image/*,video/*,.mp4,.mov,.m4v,.webm,.avi" required>
+    <button>Nahrát</button>
+  </form>
+  <small>Obrázky Linda komprimuje automaticky. Video optimalizuje, pokud je na serveru dostupný FFmpeg.</small>
+</section>
+
+<section class="media-grid045">
+{% for m in rows %}<article class="media-card045">
+  <div class="media-preview045">
+    {% if m.file_path %}
+      {% if m.kind and ('video' in m.kind or m.file_path.lower().endswith(('.mp4','.mov','.m4v','.webm','.avi'))) %}<video controls preload="metadata" src="/?page=file&type=media&id={{ m.id }}"></video>{% else %}<img src="/?page=file&type=media&id={{ m.id }}&variant=thumb" alt="{{ m.title or m.prompt or 'Médium' }}" loading="lazy">{% endif %}
+    {% else %}<div>{{ m.status }}</div>{% endif %}
+  </div>
+  <div class="media-info045"><strong>{{ m.title or m.post_title or m.blog_title or 'Médium #' ~ m.id }}</strong><small>{{ m.kind or 'image' }} · {{ m.provider }} · {{ m.status }}</small>{% if m.post_title %}<span>{{ m.post_title }}</span>{% elif m.blog_title %}<span>{{ m.blog_title }}</span>{% endif %}</div>
+</article>{% else %}<div class="empty card">Žádná média.</div>{% endfor %}
+</section>
+</div>
+{% endblock %}

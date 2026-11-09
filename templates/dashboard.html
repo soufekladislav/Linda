@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not current_project %}
+<section class="card empty-project045 workspace-width046">
+  <img src="{{ linda_image }}" alt="Linda">
+  <div><span class="pill light">Linda</span><h2>Vyber projekt</h2><p class="muted">Linda pracuje vždy v kontextu konkrétního webu, nabídky, obsahu a připojených kanálů.</p><a class="btn" href="?page=projects">Otevřít projekty</a></div>
+</section>
+{% else %}
+<section class="coworker-card045 coworker-card046 workspace-width046" data-chat-project="{{ current_project.id }}" data-chat-direct="1">
+  <header class="coworker-head045 coworker-head046">
+    <div class="coworker-person045"><img src="{{ linda_image }}" alt="Linda"><div><h2>Linda</h2><p>{{ current_project.name }} · marketingová kolegyně a průvodce projektem</p></div></div>
+    <div class="coworker-meta045">
+      {% if approval_count %}<a href="?page=content&project_id={{ current_project.id }}&view=approval"><b>{{ approval_count }}</b> ke schválení</a>{% endif %}
+      {% if queue.queued + queue.running %}<a href="?page=queue"><b>{{ queue.queued + queue.running }}</b> ve frontě</a>{% endif %}
+      <span><i></i> online</span>
+      <span class="help046"><button type="button" class="help-button046" data-help-toggle aria-label="Co Linda umí">i</button><span class="help-popover046">Linda zná nastavení projektu, webové znalosti, Brand kit, konektory, obsah, kalendář i výsledky. Může tě provést nastavením, navrhnout plán a předat delší práci do fronty.</span></span>
+    </div>
+  </header>
+
+  {% if proactive_brief %}
+  <aside class="linda-brief046" data-proactive-brief>
+    <img src="{{ linda_image }}" alt="Linda">
+    <div><strong>Dnes bych začala tady</strong><p>{{ proactive_brief.message }}</p>
+      {% if proactive_brief.actions %}<div class="chat-actions046">{% for a in proactive_brief.actions %}{% if a.href %}<a class="chat-action046" href="{{ a.href }}">{{ a.label }}</a>{% else %}<button type="button" class="chat-action046" data-chat-action="{{ a.action }}" data-project-id="{{ current_project.id }}">{{ a.label }}</button>{% endif %}{% endfor %}</div>{% endif %}
+    </div>
+  </aside>
+  {% endif %}
+
+  <div class="chat-thread045 chat-thread046" data-chat-thread>
+    {% if chat_messages %}
+      {% for m in chat_messages %}
+      <div class="chat-msg045 {{ 'user' if m.event == 'chat_user' else 'linda' }}">
+        {% if m.event != 'chat_user' %}<img class="chat-avatar045" src="{{ linda_image }}" alt="Linda">{% endif %}
+        <div class="chat-bubble045"><div class="chat-markup046">{% if m.event == 'chat_user' %}{{ m.message }}{% else %}{{ m.message|chat_markup }}{% endif %}</div>{% if m.created_at %}<small>{{ m.created_at }}</small>{% endif %}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="chat-empty045"><img src="{{ linda_image }}" alt="Linda"><div><h3>Ahoj, jsem Linda.</h3><p>Ráda tě provedu celým procesem nastavení a plánování. Nejsi na to sám 🙂 Napiš mi, co chceš prodat, zlepšit nebo nastavit. Pokud bude potřeba něco otevřít v aplikaci, pošlu ti rovnou odkaz nebo akci.</p></div></div>
+    {% endif %}
+  </div>
+
+  <form method="post" class="chat-composer045 chat-composer046" data-linda-chat-form>
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <input type="hidden" name="action" value="chat">
+    <input type="hidden" name="project_id" value="{{ current_project.id }}">
+    <input type="hidden" name="workflow_key" value="">
+    <div class="chat-input-wrap045">
+      <textarea name="message" rows="1" placeholder="Napiš Lindě… třeba: Proveď mě nastavením projektu a řekni, co ještě chybí." required></textarea>
+      <button type="submit" class="chat-send045" data-chat-submit aria-label="Poslat zprávu">↑</button>
+    </div>
+    <div class="chat-hint045"><span data-chat-status>Enter odešle · Shift+Enter nový řádek</span></div>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

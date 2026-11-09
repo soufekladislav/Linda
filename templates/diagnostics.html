@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card"><div class="calendar-toolbar"><div><h2>Diagnostika aplikace</h2><p class="muted">První Python build nic automaticky nemigruje. Kontroluje, že živá databáze odpovídá Lindě 3.8.</p></div><a class="btn secondary small" href="/developer/{{ developer_token }}/manifest.json" target="_blank">Developer manifest</a></div></div>
+<div class="diagnostic-grid">
+  <div class="card"><h2>Databáze</h2><pre>{{ db_health | tojson(indent=2) }}</pre></div>
+  <div class="card"><h2>Schema parity</h2><pre>{{ schema | tojson(indent=2) }}</pre></div>
+  <div class="card"><h2>Fresh AI Engine</h2><pre>{{ engine_health | tojson(indent=2) }}</pre></div>
+</div>
+{% if manifest %}<div class="diagnostic-grid diagnostic-grid043">
+  <div class="card"><h2>AI audit Lindy</h2><pre>{{ manifest.ai_engine.audit | tojson(indent=2) }}</pre></div>
+  <div class="card"><h2>Média a storage</h2><pre>{{ manifest.storage | tojson(indent=2) }}</pre></div>
+</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-width046">
+<section class="page-head045">
+  <div><span class="pill light">Obsah projektu</span><h2>Obsah</h2><p>Vše, co Linda připravuje pro web a distribuční kanály.</p></div>
+  <a class="btn small" href="?page=dashboard&project_id={{ selected_project }}">Naplánovat s Lindou</a>
+</section>
+<nav class="content-tabs045" aria-label="Filtr obsahu">
+  <a class="{{ 'active' if content_view == 'all' else '' }}" href="?page=content&project_id={{ selected_project }}&view=all">Vše</a>
+  <a class="{{ 'active' if content_view == 'posts' else '' }}" href="?page=content&project_id={{ selected_project }}&view=posts">Příspěvky</a>
+  <a class="{{ 'active' if content_view == 'articles' else '' }}" href="?page=content&project_id={{ selected_project }}&view=articles">Články</a>
+  <a class="{{ 'active' if content_view == 'approval' else '' }}" href="?page=content&project_id={{ selected_project }}&view=approval">Ke schválení</a>
+</nav>
+
+{% if approval_mode and rows %}
+<form method="post" id="bulkApproval37" class="bulk-bar045">
+  <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="bulk">
+  <label><input type="checkbox" data-select-all37 data-bulk-form="bulkApproval37"> Vybrat vše</label>
+  <select name="bulk_action"><option value="approve">Schválit a naplánovat</option><option value="images">Přegenerovat obrázky</option><option value="discard">Vrátit bez termínu</option><option value="delete">Smazat</option></select>
+  <button class="small">Provést</button>
+</form>
+{% endif %}
+
+{% if rows and approval_mode %}
+<section class="approval-list065">
+{% for r in rows %}<article class="approval-row065" id="post-{{ r.id }}">
+  <label class="approval-check065" title="Vybrat"><input form="bulkApproval37" type="checkbox" name="post_ids" value="{{ r.id }}"></label>
+  <div class="approval-thumb065">{% if r.image_id %}<img src="/?page=file&type=media&id={{ r.image_id }}&variant=thumb" alt="{{ r.title or 'Post' }}" loading="lazy">{% else %}<span>{{ provider_icons.get(r.platform,'•') }}</span>{% endif %}</div>
+  <div class="approval-copy065"><div class="content-meta045"><span>{{ providers.get(r.platform,r.platform) }}</span><span class="status {{ r.status }}">{{ r.status }}</span>{% if r.publication_hold %}<span class="hold" title="{{ r.publication_hold_message or 'Publikace je pozastavená.' }}">{{ 'dopracovat text' if r.publication_hold == 'content_short' else ('vyžaduje opravu' if r.publication_hold == 'worker_error' else ('ručně pozastaveno' if r.publication_hold == 'manual' else 'pozastaveno')) }}</span>{% endif %}</div><h3>{{ r.title or 'Bez názvu' }}</h3><p>{{ (r.body or '')[:260] }}</p><small>{% if r.scheduled_at %}Naplánováno {{ r.scheduled_at.strftime('%d.%m. %H:%M') }} · {% endif %}{{ r.post_type }}</small></div>
+  <div class="post-job-state065 {{ 'active' if r.active_job else '' }}" data-post-job-state data-post-id="{{ r.id }}" data-job-id="{{ r.active_job.id if r.active_job else '' }}">{% if r.active_job %}<span class="spinner065"></span><div><b>{{ r.active_job.label }}</b><small>{{ 'Probíhá' if r.active_job.status=='running' else 'Čeká ve frontě' }} · {{ r.active_job.progress }} %</small></div>{% endif %}</div>
+  <div class="approval-actions065"><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="approve"><button class="small">Schválit</button></form><button type="button" class="btn small secondary" data-post-editor="{{ r.id }}">Upravit</button></div>
+</article>{% endfor %}
+</section>
+{% elif rows %}
+<section class="content-grid045">
+{% for r in rows %}<article class="content-card045 {{ 'processing065' if r.active_job else '' }}" id="post-{{ r.id }}">
+  <div class="content-media045">{% if r.image_id %}{% if r.image_kind and 'video' in r.image_kind %}<video controls preload="metadata" src="/?page=file&type=media&id={{ r.image_id }}"></video>{% else %}<img src="/?page=file&type=media&id={{ r.image_id }}&variant=thumb" alt="{{ r.title or 'Post' }}" loading="lazy">{% endif %}{% else %}<div class="content-no-media045">{{ providers.get(r.platform,r.platform) }}</div>{% endif %}<div class="post-job-state065 {{ 'active' if r.active_job else '' }}" data-post-job-state data-post-id="{{ r.id }}" data-job-id="{{ r.active_job.id if r.active_job else '' }}">{% if r.active_job %}<span class="spinner065"></span><div><b>{{ r.active_job.label }}</b><small>{{ 'Probíhá' if r.active_job.status=='running' else 'Čeká ve frontě' }} · {{ r.active_job.progress }} %</small></div>{% endif %}</div></div>
+  <div class="content-body045">
+    <div class="content-meta045"><span>{{ providers.get(r.platform,r.platform) }}</span><span class="status {{ r.status }}">{{ r.status }}</span>{% if r.publication_hold %}<span class="hold" title="{{ r.publication_hold_message or 'Publikace je pozastavená.' }}">{{ 'dopracovat text' if r.publication_hold == 'content_short' else ('vyžaduje opravu' if r.publication_hold == 'worker_error' else ('ručně pozastaveno' if r.publication_hold == 'manual' else 'pozastaveno')) }}</span>{% endif %}</div>
+    <h3>{{ r.title or 'Bez názvu' }}</h3><small>{{ r.post_type }}{% if r.scheduled_at %} · {{ r.scheduled_at.strftime('%d.%m. %H:%M') }}{% endif %}</small>
+    {% if r.active_job %}<div class="pending-change067"><b>{{ r.active_job.label }}</b><span>{{ 'Probíhá' if r.active_job.status=='running' else 'Čeká' }} · {{ r.active_job.progress }} %</span><small>Zobrazuji poslední uloženou verzi. Po dokončení se karta sama obnoví.</small></div>{% endif %}
+    <p>{{ (r.body or '')[:420] }}</p>
+    {% if r.destination_url %}<a class="content-link045" href="{{ r.destination_url }}" target="_blank" rel="noopener">{{ r.destination_url }}</a>{% endif %}
+  </div>
+  <footer class="content-actions045">
+    <button type="button" class="btn small secondary" data-post-editor="{{ r.id }}">Detail / upravit</button>
+    <details class="content-more045"><summary class="btn small secondary">Další</summary><div><form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="generate_image"><button class="small secondary">Nový obrázek</button></form>{% if r.carousel_slides %}<form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="generate_carousel"><button class="small secondary">Carousel</button></form>{% endif %}<form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="publish_post"><button class="small">Publikovat</button></form><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="duplicate"><button class="small secondary">Vytvořit variantu</button></form><form method="post" class="delete-post-form"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="delete"><button class="small danger">Smazat</button></form></div></details>
+  </footer>
+</article>{% endfor %}
+</section>
+{% elif content_view in ['posts','approval'] %}
+<div class="empty card">{{ 'Nic nečeká na schválení.' if approval_mode else 'Žádné příspěvky.' }}</div>
+{% endif %}
+
+{% if articles %}
+<section class="article-section045"><div class="section-head045"><h2>Články</h2><span>{{ articles|length }}</span></div><div class="article-grid045">
+{% for b in articles %}<article class="article-card045">
+  <div class="article-cover045">{% if b.image_id %}<img src="/?page=file&type=media&id={{ b.image_id }}&variant=thumb" alt="{{ b.title }}" loading="lazy">{% else %}<div>Článek</div>{% endif %}</div>
+  <div><div class="content-meta045"><span>Web</span><span class="status {{ b.status }}">{{ b.status }}</span></div><h3>{{ b.title }}</h3><p>{{ (b.excerpt or '')[:260] }}</p>{% if b.destination_url %}<a class="content-link045" href="{{ b.destination_url }}" target="_blank" rel="noopener">{{ b.destination_url }}</a>{% endif %}</div>
+  <footer><a class="btn small secondary" href="?page=blog&project_id={{ selected_project }}#blog-{{ b.id }}">Upravit</a>{% if approval_mode %}<form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="publish_blog"><input type="hidden" name="blog_id" value="{{ b.id }}"><button class="small">Schválit</button></form>{% endif %}</footer>
+</article>{% endfor %}
+</div></section>
+{% elif content_view == 'articles' %}
+<div class="empty card">Zatím žádné články.</div>
+{% endif %}
+{% include "_post_editor.html" %}
+</div>
+{% endblock %}

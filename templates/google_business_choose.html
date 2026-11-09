@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card compact-page045">
+  <span class="pill light">Google Business Profile</span>
+  <h2>Vyber firemní profil</h2>
+  <p class="muted">Linda bude publikovat příspěvky do zvolené firemní lokality.</p>
+  <form method="post" class="choice-list045">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    {% for item in items %}
+      <label class="choice-card045">
+        <input type="radio" name="choice" value="{{ loop.index0 }}" {{ 'checked' if loop.first else '' }}>
+        <span><strong>{{ item.title }}</strong>{% if item.website %}<small>{{ item.website }}</small>{% endif %}{% if item.store_code %}<small>Store code: {{ item.store_code }}</small>{% endif %}</span>
+      </label>
+    {% endfor %}
+    <button>Propojit s Lindou</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="calendar-toolbar"><div><h2>{{ heading }}</h2><p class="muted">{{ description }}</p></div>
+    {% if projects %}<form method="get" class="mini-filter"><input type="hidden" name="page" value="{{ current_page }}"><select name="project_id"><option value="0">Všechny projekty</option>{% for p in projects %}<option value="{{ p.id }}" {{ 'selected' if p.id == selected_project else '' }}>{{ p.name }}</option>{% endfor %}</select><button class="small">Filtrovat</button></form>{% endif %}
+  </div>
+  <div class="content-list">
+    {% for row in rows %}
+    <div class="content-row"><div>{% if row.status %}<span class="badge status {{ row.status }}">{{ row.status }}</span>{% endif %}{% if row.platform %}<span class="badge {{ row.platform }}">{{ row.platform }}</span>{% endif %}</div>
+      <div><strong>{{ row.title or row.name or row.type or row.source_type or ('#' ~ row.id) }}</strong><small>{{ row.project_name or row.url or row.provider or '' }}</small><p class="muted">{{ (row.body or row.summary or row.message or row.brief or '')[:360] }}</p></div>
+      <div>{% if row.destination_url %}<a class="btn small secondary" href="{{ row.destination_url }}" target="_blank">Odkaz</a>{% endif %}</div>
+    </div>
+    {% else %}<div class="empty">Zatím zde nic není.</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}

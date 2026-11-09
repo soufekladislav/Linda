@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero-panel linda-hero"><div><span class="pill">Linda 0.4.0</span><h1>Stejná Linda. Nová střeva.</h1><p>UX, obrázky a pracovní logika zůstávají. Backend se přesouvá na Python, AI inference na Fresh AI Engine a WordPress konektor do Fresh Core.</p></div><img class="linda-hero-img" src="{{ linda_image }}" alt="Linda"></div>
+<div class="card"><h2>Migrační režim</h2><p>Databáze běží in-place. Python při startu nevytváří nové produkční schema a nespouští destruktivní migrace.</p></div>
+{% endblock %}

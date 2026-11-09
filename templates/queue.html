@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% block content %}
+<div class="workspace-width046">
+<section class="card queue-hero37 queue-hero046" data-queue-summary data-queued="{{ summary.queued }}" data-running="{{ summary.running }}" data-failed="{{ summary.failed }}">
+  <div>
+    <span class="pill light">Práce na pozadí</span>
+    <h2>Fronta úloh</h2>
+    <p class="muted">Linda tu ukazuje jen práci, která běží na pozadí. Když úloha selže, uvidíš lidsky napsané proč a co udělat dál.</p>
+    <div class="queue-runtime047" data-cron-heartbeat>
+      {% if queue_runtime and queue_runtime.get('linda_cron_last_run') %}Worker naposledy: {{ queue_runtime.get('linda_cron_last_run') }}{% else %}Worker zatím nemá zaznamenaný automatický běh.{% endif %}
+    </div>
+    {% if last_run %}<div class="queue-last-run065">Poslední běh: převzato <b>{{ last_run.get('claimed',0) }}</b>, dokončeno <b>{{ last_run.get('done',0) }}</b>, selhalo <b>{{ last_run.get('failed',0) }}</b>.</div>{% endif %}
+  </div>
+  <div class="queue-kpis065">
+    <div><strong>{{ summary.running }}</strong><span>probíhá</span></div>
+    <div><strong>{{ summary.queued }}</strong><span>čeká</span></div>
+    <div class="failed"><strong>{{ summary.failed }}</strong><span>selhalo</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="calendar-toolbar">
+    <div><h2>Aktivní úlohy</h2><p class="muted">Čekající úlohy se zpracují při nejbližším běhu workeru. Probíhající úloha průběžně aktualizuje stav.</p></div>
+    <form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="process"><select name="worker_group"><option value="all">Vše</option><option value="text">Text</option><option value="media">Média</option><option value="publication">Publikace</option><option value="maintenance">Údržba</option></select><button class="small">Zpracovat teď</button></form>
+  </div>
+  <div class="content-list queue-list046" data-queue-live047>
+  {% for q in active_rows %}
+    <div class="queue-item queue-item046 queue-item047" data-job-id="{{ q.id }}" data-status="{{ q.status }}">
+      <div><span class="badge status {{ q.status }}" data-job-status>{{ 'Opakování' if q.status=='queued' and (q.attempts or 0)>0 else queue_status_labels.get(q.status,q.status) }}</span><span class="badge type">{{ queue_group_labels.get(q.worker_group,q.worker_group) }}</span></div>
+      <div><strong>{{ q.title }}</strong><small>{{ q.project_name or 'Bez projektu' }} · {{ queue_type_labels.get(q.type,q.type) }} · pokus {{ q.attempts or 0 }}/{{ q.max_attempts or 3 }}</small><p data-job-message>{{ q.friendly.message }}</p><div class="queue-live-meta047"><span>{% if q.created_at %}Zadáno {{ q.created_at }}{% endif %}</span><span data-job-updated>{% if q.updated_at %}Aktualizováno {{ q.updated_at }}{% endif %}</span>{% if q.locked_at %}<span>Spuštěno {{ q.locked_at }}</span>{% endif %}{% if q.available_at and q.status=='queued' %}<span>Další pokus nejdřív {{ q.available_at }}</span>{% endif %}{% if q.depends_on_job_id %}<span>Čeká na úlohu #{{ q.depends_on_job_id }}</span>{% endif %}</div></div>
+      <div class="queue-progress046"><strong data-job-progress>{{ q.progress or 0 }} %</strong><div class="queue-actions069"><a class="btn tiny secondary" href="{{ q.friendly.action_url }}">Otevřít obsah</a><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="cancel_job"><input type="hidden" name="job_id" value="{{ q.id }}"><button class="tiny danger">Zrušit</button></form></div></div>
+    </div>
+  {% else %}<div class="empty">Žádná úloha právě nečeká ani neběží.</div>{% endfor %}
+  </div>
+</section>
+
+{% if failed_rows %}
+<section class="card queue-failed-section065">
+  <div class="section-head065"><div><h2>Nedokončené úlohy</h2><p class="muted">Tyto úlohy už Linda automaticky neopakuje. Důvod je napsaný bez technických hlášek.</p></div><span class="count065">{{ summary.failed }}</span></div>
+  <div class="failed-list065">
+  {% for q in failed_rows %}
+    <article class="failed-job065">
+      <div class="failed-icon065">!</div>
+      <div class="failed-main065"><strong>{{ q.friendly.title }}</strong><small>{{ q.project_name or 'Bez projektu' }} · {{ queue_type_labels.get(q.type,q.type) }} · {{ q.title }}</small><p>{{ q.friendly.message }}</p><div class="quick-actions"><a class="btn small secondary" href="{{ q.friendly.action_url }}">Otevřít a opravit</a><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="retry_job"><input type="hidden" name="job_id" value="{{ q.id }}"><button class="small">Zkusit znovu</button></form></div>{% if user.role == 'superadmin' and q.friendly.technical %}<details class="technical065"><summary>Technický detail pro administrátora</summary><code>{{ q.friendly.technical }}</code></details>{% endif %}</div>
+      <div class="failed-meta065">#{{ q.id }}<br>{% if q.created_at %}zadáno {{ q.created_at }}<br>{% endif %}{% if q.finished_at %}selhalo {{ q.finished_at }}{% else %}{{ q.updated_at or '' }}{% endif %}</div>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if done_rows %}<details class="card queue-done065"><summary>Poslední dokončené úlohy</summary><div>{% for q in done_rows %}<p><b>{{ q.title }}</b> · {{ q.project_name or 'Bez projektu' }} · zadáno {{ q.created_at or '—' }} · dokončeno {{ q.finished_at or q.updated_at or '—' }}</p>{% endfor %}</div></details>{% endif %}
+</div>
+{% endblock %}

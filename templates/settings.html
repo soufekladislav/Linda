@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="workspace-width046">
+<section class="card settings-head046"><span class="pill light">Nastavení projektu</span><h2>{{ current_project.name if current_project else 'Linda' }}</h2><p class="muted">Nastavení je rozdělené podle toho, co Linda potřebuje znát, kam může publikovat a co má hlídat.</p></section>
+<div class="settings-grid settings-grid046">
+  {% if selected_project %}<a class="card settings-card" href="?page=project_setup&project_id={{ selected_project }}"><h2>Projekt</h2><p>Nabídka, cílová skupina, schvalování a AI profil.</p><span>Otevřít →</span></a>
+  <a class="card settings-card" href="?page=connectors&project_id={{ selected_project }}"><h2>Konektory</h2><p>WordPress, Facebook, Instagram, LinkedIn, Google Business Profile a další kanály.</p><span>Připojit →</span></a>
+  <a class="card settings-card" href="?page=knowledge&project_id={{ selected_project }}"><h2>Znalosti webu</h2><p>Web, produkty, články, interní cíle a odkazy, ze kterých Linda plánuje.</p><span>Spravovat →</span></a>
+  <a class="card settings-card" href="?page=references&project_id={{ selected_project }}"><h2>Brand kit</h2><p>Referenční vizuály, loga a Style DNA pro generování médií.</p><span>Spravovat →</span></a>
+  <a class="card settings-card" href="?page=media&project_id={{ selected_project }}"><h2>Média</h2><p>AI vizuály a vlastní nahraná videa/fotky.</p><span>Otevřít →</span></a>
+  <a class="card settings-card" href="?page=analytics&project_id={{ selected_project }}"><h2>Výsledky</h2><p>Výkon obsahu, webové konverze a Woo data.</p><span>Zobrazit →</span></a>{% endif %}
+  <a class="card settings-card" href="?page=account"><h2>Můj účet</h2><p>Profil, heslo a preference upozornění.</p><span>Otevřít →</span></a>
+  <a class="card settings-card" href="?page=notifications"><h2>Upozornění</h2><p>Dokončené úlohy, chyby publikace a věci vyžadující zásah.</p><span>Zobrazit →</span></a>
+  {% if user.role in ['admin','superadmin'] %}<a class="card settings-card" href="?page=diagnostics"><h2>Diagnostika</h2><p>Databáze, AI Engine, schema a developer manifest.</p><span>Otevřít →</span></a>{% endif %}
+  {% if user.role=='superadmin' %}<a class="card settings-card" href="?page=admin"><h2>Admin konzole</h2><p>Uživatelé, všechny úlohy, logické cesty a provoz.</p><span>Otevřít →</span></a>{% endif %}
+</div>
+</div>
+{% endblock %}

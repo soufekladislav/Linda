@@ -1,0 +1,83 @@
+/* Linda 0.4.3 — identity + interactive coworker polish */
+:root{
+  --linda-green:#9EC415;
+  --linda-green-dark:#789b08;
+  --linda-green-soft:#f1f8df;
+  --linda-pink:#E40058;
+  --linda-pink-dark:#bc0048;
+  --linda-pink-soft:#fff0f6;
+  --linda-ink:#111827;
+  --linda-navy:#0d1729;
+  --linda-line:#dde6cf;
+}
+html,body,button,input,select,textarea{font-family:"Poppins",sans-serif}
+a{color:var(--linda-green-dark)}
+button,.btn{font-weight:700}
+button:not(.secondary):not(.danger):not(.pink),.btn:not(.secondary):not(.danger):not(.pink){background:var(--linda-green);border-color:var(--linda-green);color:#111827}
+button:not(.secondary):not(.danger):not(.pink):hover,.btn:not(.secondary):not(.danger):not(.pink):hover{background:#acd827;border-color:#acd827}
+button.pink,.btn.pink,.pink{background:var(--linda-pink)!important;border-color:var(--linda-pink)!important;color:#fff!important}
+button.pink:hover,.btn.pink:hover{background:var(--linda-pink-dark)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--linda-green)!important;box-shadow:0 0 0 3px rgba(158,196,21,.14)!important;outline:0}
+
+/* Make Linda the visual identity, not only a helper card. */
+.brand043{gap:10px}
+.linda-brand-avatar043{width:46px!important;height:46px!important;border-radius:13px!important;overflow:hidden;background:var(--linda-green-soft);border:1px solid rgba(158,196,21,.35);box-shadow:0 8px 24px rgba(158,196,21,.18)}
+.linda-brand-avatar043 img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;transform:scale(1.35)}
+.brand043 strong{font-size:15px}.brand043 small{max-width:145px;line-height:1.25}
+.sidebar-linda042{border-color:rgba(158,196,21,.42);background:linear-gradient(135deg,#fff,var(--linda-green-soft))}
+.sidebar-linda042 strong{color:var(--linda-ink)}
+.project-nav042 a.active{background:linear-gradient(90deg,var(--linda-green-soft),#fff);box-shadow:inset 3px 0 0 var(--linda-green)}
+.project-nav042 a.active .nav-dot042{background:var(--linda-green);border-color:var(--linda-green)}
+.nav-count042{background:var(--linda-pink)!important;color:white!important}
+
+/* Auth — keep the dark Engine-like shell, but visually own it as Linda. */
+.auth-page042{background:var(--linda-navy)}
+.auth-story042{position:relative;overflow:hidden;background:
+  radial-gradient(circle at 16% 18%,rgba(158,196,21,.12),transparent 28%),
+  radial-gradient(circle at 74% 68%,rgba(228,0,88,.10),transparent 30%),
+  #0d1729}
+.auth-story042:after{content:"";position:absolute;right:-120px;bottom:-150px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(158,196,21,.12);box-shadow:0 0 0 70px rgba(228,0,88,.025),0 0 0 140px rgba(158,196,21,.02);pointer-events:none}
+.auth-brand043{position:relative;z-index:2}.auth-brand043 img{width:54px!important;height:54px!important;border-radius:14px;object-fit:cover;transform:none;background:#fff;border:1px solid rgba(158,196,21,.3)}
+.auth-brand043 strong{font-size:16px}.auth-brand043 small{color:#aeb9ca}
+.auth-message043{position:relative;z-index:2;max-width:770px;padding-right:190px}
+.auth-linda-visual043{position:absolute;right:-54px;top:-35px;width:230px;height:230px;border-radius:32px;overflow:hidden;border:1px solid rgba(158,196,21,.22);box-shadow:0 28px 70px rgba(0,0,0,.3);transform:rotate(2deg);background:#111b2c}
+.auth-linda-visual043 img{width:100%;height:100%;object-fit:cover}
+.auth-message043 h1{font-size:clamp(42px,5vw,76px);line-height:.98;letter-spacing:-.045em}
+.auth-message043 .pink-word{color:var(--linda-pink)}
+.auth-kicker042{color:var(--linda-green)!important}
+.auth-paths042 span{border-color:rgba(158,196,21,.25)!important}.auth-card042{border-color:rgba(158,196,21,.22)!important}.auth-card042 button{background:var(--linda-pink)!important;color:white!important;border-color:var(--linda-pink)!important}.auth-card042 a b{color:var(--linda-green)!important}
+
+/* Interactive coworker */
+.coworker-card042{border-color:rgba(158,196,21,.4)!important;box-shadow:0 16px 48px rgba(61,78,18,.08)}
+.coworker-head042{background:linear-gradient(120deg,var(--linda-green-soft),#fff 65%,var(--linda-pink-soft));margin:-20px -20px 0;padding:18px 20px;border-bottom:1px solid #e6edd9;border-radius:17px 17px 0 0}
+.coworker-person042 img{width:58px!important;height:58px!important;border-radius:16px!important;object-fit:cover!important;box-shadow:0 8px 24px rgba(17,24,39,.14)}
+.coworker-person042 h2{font-size:18px!important}.coworker-person042 p{margin:3px 0 0!important;color:#657063!important;font-size:10px!important}
+.chat-thread042{min-height:420px;max-height:58vh;background:linear-gradient(180deg,#fbfdf8,#fff);padding:22px!important;scroll-behavior:smooth}
+.chat-empty043{display:flex!important;align-items:center!important;gap:18px!important;text-align:left!important;max-width:720px!important;margin:40px auto!important;padding:22px!important;background:#fff!important;border:1px solid var(--linda-line)!important;border-radius:18px!important;box-shadow:0 12px 35px rgba(17,24,39,.05)}
+.chat-empty043 img{width:108px;height:108px;border-radius:20px;object-fit:cover;flex:0 0 auto}.chat-empty043 h3{font-size:20px;margin:0 0 7px}.chat-empty043 p{font-size:12px;line-height:1.7;margin:0;color:#536057}
+.chat-msg042{display:flex!important;align-items:flex-end!important;gap:8px!important;margin:12px 0!important}.chat-msg042.user{justify-content:flex-end!important}.chat-msg042.linda{justify-content:flex-start!important}
+.chat-avatar042{width:34px!important;height:34px!important;border-radius:10px!important;object-fit:cover!important;box-shadow:0 5px 16px rgba(17,24,39,.1)}
+.chat-bubble042{font-size:12px!important;line-height:1.65!important;white-space:pre-wrap;max-width:min(76%,720px)!important;padding:12px 14px!important;border-radius:16px!important;box-shadow:none!important}
+.chat-msg042.linda .chat-bubble042{background:#fff!important;border:1px solid #dfe7d4!important;border-bottom-left-radius:5px!important;color:#263128!important}
+.chat-msg042.user .chat-bubble042{background:var(--linda-green-soft)!important;border:1px solid #d5e4af!important;border-bottom-right-radius:5px!important;color:#192210!important}
+.chat-bubble042 small{display:block;margin-top:7px;color:#899286;font-size:8px}
+.chat-msg043.typing .chat-bubble042{color:#6d776b;font-style:italic}.chat-msg043.error .chat-bubble042{background:var(--linda-pink-soft)!important;border-color:#ffc5dc!important;color:#8d123f!important}
+.chat-composer043{position:relative;border-top:1px solid #e4ebda!important;background:#fff!important}.chat-composer043 textarea{font-size:12px;line-height:1.6;border:1px solid #d7e2c7;background:#fcfef9;min-height:92px}.chat-composer043 textarea:disabled{opacity:.65}.chat-composer043 button[disabled]{opacity:.65;cursor:wait}
+.workflow-chip042.active{background:var(--linda-green)!important;border-color:var(--linda-green)!important;color:#10170a!important}.workflow-chip042:hover{border-color:var(--linda-green)!important}
+.chat-live-status043{min-height:17px;font-size:9px;color:#687266;margin-top:5px}.chat-live-status043.error{color:var(--linda-pink)}
+.chat-suggestions043{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0 42px}.chat-suggestions043 button{background:#fff!important;border:1px solid #dce5ce!important;color:#536057!important;font-size:9px!important;padding:6px 9px!important;min-height:30px!important}.chat-suggestions043 button:hover{border-color:var(--linda-green)!important;color:#27320f!important}
+
+/* Media: previews are thumbnails; diagnostic broken state is intentionally obvious. */
+.media-grid .thumb,.tile-media042,.blog-cover042,.calendar-post042{position:relative}.media-grid .thumb img,.tile-media042 img,.blog-cover042 img,.calendar-post042 img{background:#f1f4ee}.media-grid .thumb img[alt]{font-size:9px;color:#8b9487}.media-meta042 small{word-break:break-word}.media-grid>.card{transition:transform .15s ease,box-shadow .15s ease}.media-grid>.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(17,24,39,.07)}
+
+/* Diagnostics */
+.diagnostic-grid043{margin-top:14px}.diagnostic-grid043 pre{max-height:560px;overflow:auto;font-size:9px;line-height:1.55}
+
+@media(max-width:900px){
+  .auth-message043{padding-right:0}.auth-linda-visual043{position:relative;right:auto;top:auto;width:170px;height:170px;margin:0 0 26px}.auth-story042{display:none!important}
+  .chat-thread042{max-height:none;min-height:360px}.chat-bubble042{max-width:88%!important}
+}
+@media(max-width:640px){
+  .chat-empty043{align-items:flex-start!important;margin:18px auto!important;padding:16px!important}.chat-empty043 img{width:72px;height:72px}.chat-empty043 h3{font-size:17px}.chat-bubble042{max-width:92%!important}.coworker-head042{align-items:flex-start!important}.coworker-head042>a{display:none}.chat-suggestions043{margin-left:0}
+}
+.auth-card-linda043{display:flex;align-items:center;gap:9px;margin-bottom:16px;color:#fff;font-size:11px;font-weight:800}.auth-card-linda043 img{width:44px;height:44px;border-radius:12px;object-fit:cover;border:1px solid rgba(158,196,21,.28)}

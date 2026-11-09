@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card calendar-shell042 calendar-shell046" data-calendar-root data-csrf="{{ csrf }}" style="--calendar-cols:{{ active_networks|length if active_networks else 1 }}">
+  <header class="calendar-head042 calendar-head046">
+    <div class="calendar-title-row042">
+      <div><span class="pill light">Hlavní pracovní nástěnka</span><h2>Publikační kalendář <span class="help046"><button type="button" class="help-button046" data-help-toggle>i</button><span class="help-popover046">Kalendář ukazuje, co má Linda publikovat a kam. Karty můžeš přetahovat mezi dny i kanály. Staré nepublikované položky můžeš hromadně přesunout.</span></span></h2><p class="muted">Výchozí pohled začíná dneškem a ukazuje následujících 14 dní.</p></div>
+      <div class="quick-actions"><button type="button" class="btn secondary" data-calendar-create-open>+ Přidat obsah</button><a class="btn" href="?page=dashboard&project_id={{ selected_project }}">Naplánovat s Lindou</a></div>
+    </div>
+    <div class="calendar-controls046">
+      <div class="calendar-scope046"><a href="?page=calendar&project_id={{ selected_project }}&scope=14d" class="{{ 'active' if calendar_scope!='all' else '' }}">Dnes + 14 dní</a><a href="?page=calendar&project_id={{ selected_project }}&scope=all" class="{{ 'active' if calendar_scope=='all' else '' }}">Celý plán</a></div>
+      {% if overdue_count %}<form method="post" class="overdue-reschedule046" onsubmit="return confirm('Přeplánovat všechny starší nepublikované položky?')"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="reschedule_overdue"><label><b>{{ overdue_count }}</b> starších nepublikovaných <input type="date" name="start_date" value=""></label><button class="small pink">Hromadně přeplánovat</button></form>{% endif %}
+    </div>
+    {% if calendar_platforms %}
+    <form method="get" class="network-filter042 network-filter046" data-network-filter>
+      <input type="hidden" name="page" value="calendar"><input type="hidden" name="project_id" value="{{ selected_project }}"><input type="hidden" name="scope" value="{{ calendar_scope }}">
+      {% for net in calendar_platforms %}
+      <label><input type="checkbox" name="network" value="{{ net }}" {{ 'checked' if net in active_networks else '' }}><span class="net-icon {{ net }}">{{ provider_icons.get(net,'•') }}</span>{{ 'Blog' if net=='blog' else providers.get(net, net|title) }}</label>
+      {% endfor %}
+    </form>
+    {% else %}<p class="muted">Projekt zatím nemá připojené sociální sítě ani naplánované příspěvky.</p>{% endif %}
+  </header>
+
+  {% if calendar_dates and active_networks %}
+  <div class="calendar-scroll042 calendar-scroll046">
+    <div class="calendar-table042 calendar-table046" style="--calendar-cols:{{ active_networks|length }}">
+      <div class="calendar-cell042 head sticky046">Datum</div>
+      {% for net in active_networks %}<div class="calendar-cell042 head sticky046"><span class="net-icon {{ net }}">{{ provider_icons.get(net,'•') }}</span> {{ 'Blog' if net=='blog' else providers.get(net, net|title) }}</div>{% endfor %}
+
+      {% for day in calendar_dates %}
+        <div class="calendar-cell042 calendar-date042 {{ 'today046' if day == now_date else '' }}"><strong>{{ day[8:10] }}.{{ day[5:7] }}.</strong><small>{{ day[0:4] }}{% if day == now_date %} · dnes{% endif %}</small></div>
+        {% for net in active_networks %}
+        <div class="calendar-cell042 calendar-slot042 calendar-drop046" data-calendar-drop data-date="{{ day }}" data-platform="{{ net }}">
+          {% for r in calendar_matrix.get(day,{}).get(net,[]) %}
+          <article class="calendar-post042 calendar-post046 {{ 'processing065' if r.active_job else '' }}" draggable="true" data-calendar-card data-post-id="{{ r.id }}">
+            <div class="post-job-state065 calendar-job065 {{ 'active' if r.active_job else '' }}" data-post-job-state data-post-id="{{ r.id }}" data-job-id="{{ r.active_job.id if r.active_job else '' }}">{% if r.active_job %}<span class="spinner065"></span><div><b>{{ r.active_job.label }}</b><small>{{ 'Probíhá' if r.active_job.status=='running' else 'Čeká ve frontě' }} · {{ r.active_job.progress }} %</small></div>{% endif %}</div>
+            {% if r.image_id %}<img src="/?page=file&type=media&id={{ r.image_id }}&variant=thumb" alt="{{ r.title or 'Post' }}" loading="lazy">{% endif %}
+            <div class="calendar-post-body042">
+              <strong>{{ r.title or 'Bez názvu' }}</strong>
+              {% if r.active_job %}<div class="pending-change067 compact"><b>{{ r.active_job.label }}</b><span>{{ r.active_job.progress }} %</span></div>{% endif %}<p>{{ (r.body or '')[:120] }}</p>
+              <div class="calendar-post-meta042"><span>{{ r.scheduled_at.strftime('%H:%M') if r.scheduled_at else '—' }}</span><span>{{ r.post_type or 'post' }} · {{ r.status }}</span>{% if r.recommended_time %}<span class="recommended046">doporučeno {{ r.recommended_time }}</span>{% endif %}{% if r.publication_hold %}<span class="hold" title="{{ r.publication_hold_message or 'Publikace je pozastavená.' }}">{{ 'dopracovat text' if r.publication_hold == 'content_short' else ('vyžaduje opravu' if r.publication_hold == 'worker_error' else 'pozastaveno') }}</span>{% endif %}</div>
+            </div>
+            <div class="calendar-post-actions042">
+              <button type="button" class="btn small secondary" data-post-editor="{{ r.id }}">Detail</button>
+              {% if r.status != 'published' %}<form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="post_id" value="{{ r.id }}"><input type="hidden" name="action" value="publish_post"><button class="small">Publikovat</button></form>{% endif %}
+            </div>
+          </article>
+          {% else %}<div class="calendar-empty042 calendar-empty046">Přetáhni sem příspěvek</div>{% endfor %}
+        </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}<div class="calendar-empty042" style="padding:55px">V aktivních kanálech zatím není naplánovaný obsah.</div>{% endif %}
+</section>
+
+<dialog class="post-editor047 calendar-create063" data-calendar-create-dialog>
+  <form method="dialog" class="post-editor-card047 post-editor-form047" data-calendar-create-form>
+    <header class="post-editor-head047"><div><span class="pill light">Ruční přidání</span><h2>Přidat obsah do kalendáře</h2><p class="muted">Zadej téma. Linda připraví text podle projektu a Brand Kitu; u článku připraví i náhledový obrázek.</p></div><button type="button" class="btn small secondary" data-calendar-create-close>×</button></header>
+    <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="project_id" value="{{ selected_project }}">
+    <div class="post-editor-grid047">
+      <label>Typ obsahu<select name="content_kind" data-calendar-kind><option value="post">Příspěvek na síť</option><option value="article">Článek na web</option></select></label>
+      <label>Téma / zadání<input name="topic" required placeholder="Např. Proč firmám unikají poptávky z webu"></label>
+      <label data-calendar-platform-wrap>Kanál<select name="platform"><option value="facebook">Facebook</option><option value="instagram">Instagram</option><option value="linkedin">LinkedIn</option><option value="google_business">Google Business Profile</option><option value="x">X</option><option value="tiktok">TikTok</option></select></label>
+      <label data-calendar-format-wrap>Formát<select name="post_type"><option value="single_post">Post</option><option value="carousel">Carousel</option><option value="reel">Reel</option><option value="video">Video</option><option value="story">Story</option></select></label>
+      <label>Datum<input type="date" name="date" value="{{ now_date }}" required></label><label>Čas<input type="time" name="time"></label>
+      <label style="grid-column:1/-1">Doplňující pokyn pro Lindu<textarea name="instruction" rows="3" placeholder="Volitelné – např. prakticky, prodejně, s odkazem na konkrétní službu"></textarea></label>
+    </div>
+    <footer class="post-editor-footer047" style="grid-column:1/-1"><button type="button" class="btn secondary" data-calendar-create-close>Zrušit</button><button class="btn" type="submit">Připravit s Lindou</button></footer>
+  </form>
+</dialog>
+{% include "_post_editor.html" %}
+{% endblock %}

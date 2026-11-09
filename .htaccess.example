@@ -1,0 +1,14 @@
+# IMPORTANT: cPanel / CloudLinux Setup Python App creates the Passenger block.
+# Do not paste a second PassengerAppRoot/PassengerPython block below it.
+# Expected values on the current Fresh Crackers hosting:
+# PassengerAppRoot "/home2/lauhannq/socialmedia.freshcrackers.cz"
+# PassengerBaseURI "/"
+# PassengerPython "/home2/lauhannq/virtualenv/socialmedia.freshcrackers.cz/3.11/bin/python"
+# PassengerAppType wsgi
+# PassengerStartupFile passenger_wsgi.py
+
+Options -Indexes
+
+<FilesMatch "^\.env$">
+  Require all denied
+</FilesMatch>

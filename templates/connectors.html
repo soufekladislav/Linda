@@ -1,0 +1,47 @@
+{% extends "base.html" %}{% block content %}
+<div class="connector-page36 workspace-width046">
+<section class="card connector-intro046">
+  <div><span class="pill light">Připojení projektu</span><h2>Konektory</h2><p class="muted">Externí účty se připojují k projektu přes Fresh Key. Linda si nedrží OAuth tajemství; používá stejné projektové připojení jako ostatní Fresh nástroje.</p></div>
+  <div class="connector-steps046"><span class="active"><b>1</b> Vyber kanál</span><span><b>2</b> Přihlas se u služby</span><span><b>3</b> Vyber účet projektu</span></div>
+  <form method="get" class="connector-filter"><input type="hidden" name="page" value="connectors"><label>Projekt<select name="project_id">{% for p in projects %}<option value="{{ p.id }}" {{ 'selected' if p.id==selected_project else '' }}>{{ p.name }}</option>{% endfor %}</select></label><button class="small secondary">Zobrazit</button></form>
+  {% if fresh_key_error %}
+  <p class="muted">Fresh Key: {{ fresh_key_error }}</p>
+  {% if fresh_key_ready %}<p><a class="btn secondary" href="/?page=fresh_key_login">Propojit Fresh Key účet</a></p>{% endif %}
+  {% endif %}
+</section>
+
+<div class="connector-picker connector-picker046">{% for prov,label in providers.items() %}<a href="?page=connectors{% if selected_project %}&project_id={{ selected_project }}{% endif %}&provider={{ prov }}" class="{{ 'active' if focus==prov else '' }}"><b class="net-icon {{ prov }}">{{ provider_icons[prov] }}</b><span>{{ label }}</span>{% for c in connectors if c.provider==prov %}<em class="connector-check046 {{ 'ok' if c.status in ['connected','configured'] else 'warn' }}">{{ '✓' if c.status in ['connected','configured'] else '!' }}</em>{% endfor %}</a>{% endfor %}</div>
+
+{% if selected_project and focus %}
+<section class="card connector-add connector-wizard046">
+  <div class="section-title044"><div><span class="pill light">Krok 2</span><h2>{{ providers.get(focus,focus) }} <span class="help046"><button type="button" class="help-button046" data-help-toggle>i</button><span class="help-popover046">Fresh Key odděluje osobu, která autorizaci provedla, od projektového účtu. Díky tomu může stejné připojení používat agentura, klient i další Fresh zaměstnanci podle oprávnění projektu.</span></span></h2></div></div>
+  {% if focus in ['facebook','instagram'] and fresh_key_ready %}
+    <div class="connector-oauth046"><p>Jedním přihlášením k Meta načteme spravované Facebook Pages i propojené Instagram Professional účty. Po autorizaci vybereš jen profily, které patří k tomuto projektu.</p><a class="btn pink" href="?page=fresh_key_oauth_start&project_id={{ selected_project }}&provider=meta">Připojit Meta (Facebook + Instagram)</a></div>
+  {% elif focus == 'linkedin' and fresh_key_ready %}
+    <div class="connector-oauth046"><p>Přihlas LinkedIn přes Fresh Key. Osobní profil funguje se <code>w_member_social</code>; firemní Page se nabídne, pokud Fresh LinkedIn aplikace získá odpovídající Community Management oprávnění.</p><a class="btn pink" href="?page=fresh_key_oauth_start&project_id={{ selected_project }}&provider=linkedin">Připojit LinkedIn</a></div>
+  {% elif focus == 'google_business' and fresh_key_ready %}
+    <div class="connector-oauth046"><p>Přihlas Google účet a po autorizaci vyber konkrétní Business Profile. Token i refresh zůstávají šifrované ve Fresh Key.</p><a class="btn pink" href="?page=fresh_key_oauth_start&project_id={{ selected_project }}&provider=google_business">Připojit Google Business</a></div>
+  {% else %}
+  <form method="post" class="connector-form connector-simple044 connector-form046">
+    <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="create"><input type="hidden" name="project_id" value="{{ selected_project }}"><input type="hidden" name="provider" value="{{ focus }}">
+    {% if focus == 'wordpress' %}
+      <p class="connector-note046">Na WordPressu nainstaluj Fresh Core 0.5.2+, zkopíruj READ a WRITE key. WordPress zatím zůstává aplikačním konektorem Lindy; sociální OAuth už spravuje Fresh Key.</p>
+      <label>Adresa webu<input name="endpoint_url" placeholder="https://example.cz" required></label>
+      <label>Název webu<input name="account_name" placeholder="Např. Fresh Crackers"></label>
+      <label class="form-full">Fresh Core READ key<textarea name="access_token" rows="2" autocomplete="off" required></textarea></label>
+      <label class="form-full">Fresh Core WRITE key <small>potřebný pro publikaci článků</small><textarea name="client_secret" rows="2" autocomplete="off" required></textarea></label>
+    {% elif focus in ['facebook','instagram','linkedin','google_business'] %}
+      <p class="connector-note046">Fresh Key není dostupný. Zkontroluj připojení Lindy k AI Enginu a konfiguraci Fresh Key provideru.</p>
+    {% else %}
+      <p class="connector-note046">Tento provider zatím není součástí Fresh Key. Ruční token zůstává kompatibilní pro stávající integraci.</p>
+      <label>Název účtu<input name="account_name"></label><label>Account / Page / Author ID<input name="auth_user"></label><label class="form-full">Access token<textarea name="access_token" rows="3" autocomplete="off" required></textarea></label>{% if focus in ['x','tiktok'] %}<label>Client ID<input name="client_id"></label><label>Client secret<textarea name="client_secret" rows="2"></textarea></label>{% endif %}<label class="form-full">Refresh token <small>pokud ho síť používá</small><textarea name="refresh_token" rows="2"></textarea></label>
+    {% endif %}
+    {% if focus not in ['facebook','instagram','linkedin','google_business'] or focus == 'wordpress' %}<button class="pink">Připojit a otestovat</button>{% endif %}
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="card connector-saved046"><div class="heading-help046"><div><span class="pill light">Krok 3</span><h2>Připojené kanály</h2><p class="muted">Fresh Key připojení jsou projektová. Linda při publikaci získá potřebné oprávnění až z centrálního trezoru.</p></div></div><div class="connector-list36">{% for c in connectors %}<div class="connector-row36 connector-row046"><div class="connector-name36"><b class="net-icon {{ c.provider }}">{{ provider_icons.get(c.provider,'•') }}</b><div><strong>{{ providers.get(c.provider,c.provider) }} · {{ c.account_name or c.endpoint_url or 'bez názvu' }}</strong><small>{{ c.project_name or 'Bez projektu' }}{% if c.fresh_key_managed %} · Fresh Key{% endif %}</small></div></div><div class="connector-health36"><span class="badge status {{ c.status }}">{{ c.status }}</span><small>{{ c.last_test_message or c.last_preflight_message or ('Spravuje Fresh Key.' if c.fresh_key_managed else 'Zatím netestováno.') }}</small></div><div class="connector-actions36"><form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="test"><input type="hidden" name="connector_id" value="{{ c.id }}"><button class="small">Otestovat</button></form>{% if c.provider=='wordpress' %}<form method="post" data-background-job="1"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="sync"><input type="hidden" name="connector_id" value="{{ c.id }}"><button class="small secondary">Synchronizovat web</button></form>{% endif %}{% if not c.fresh_key_managed %}<details class="connector-edit"><summary class="btn small secondary">Upravit</summary><form method="post" class="connector-form"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="update"><input type="hidden" name="connector_id" value="{{ c.id }}"><input type="hidden" name="project_id" value="{{ c.project_id }}"><input type="hidden" name="provider" value="{{ c.provider }}"><label>Název<input name="account_name" value="{{ c.account_name or '' }}"></label><label>Endpoint / web<input name="endpoint_url" value="{{ c.endpoint_url or '' }}"></label><label>Account ID<input name="auth_user" value="{{ c.auth_user or '' }}"></label><label class="form-full">Nový access / READ key <small>prázdné = ponechat</small><textarea name="access_token"></textarea></label><label class="form-full">Nový secret / WRITE key <small>prázdné = ponechat</small><textarea name="client_secret"></textarea></label><label class="form-full">Nový refresh token <small>prázdné = ponechat</small><textarea name="refresh_token"></textarea></label><button>Uložit a otestovat</button></form></details>{% endif %}<form method="post"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="action" value="delete"><input type="hidden" name="connector_id" value="{{ c.id }}"><button class="small danger">{{ 'Odpojit od projektu' if c.fresh_key_managed else 'Smazat' }}</button></form></div></div>{% else %}<div class="empty">Zatím není připojený žádný kanál.</div>{% endfor %}</div></section>
+</div>
+{% endblock %}

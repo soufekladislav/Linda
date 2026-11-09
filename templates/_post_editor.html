@@ -1,0 +1,53 @@
+<dialog id="postEditorDialog" class="post-editor047">
+  <div class="post-editor-card047">
+    <button type="button" class="post-editor-close047" data-post-editor-close aria-label="Zavřít">×</button>
+    <header class="post-editor-head047">
+      <div><span class="pill light">Detail příspěvku</span><h2 data-post-editor-title>Načítám…</h2><p data-post-editor-subtitle class="muted">Obsah, termín, kanál a média na jednom místě.</p></div>
+      <div class="post-editor-status047" data-post-editor-status></div>
+    </header>
+    <div class="post-editor-layout047">
+      <aside class="post-editor-media047">
+        <div class="post-editor-preview047" data-post-editor-preview><div class="post-editor-empty047">Bez obrázku</div></div>
+        <div class="post-editor-media-actions047">
+          <button type="button" class="btn small" data-post-editor-action="generate_image">Vygenerovat obrázek</button>
+          <button type="button" class="btn small secondary" data-post-editor-upload-trigger>Nahrát vlastní</button>
+          <input type="file" accept="image/*,video/*" hidden data-post-editor-upload>
+        </div>
+        <div class="post-editor-library-head047"><strong>Knihovna médií</strong><a href="?page=media&project_id={{ selected_project }}">Otevřít média</a></div>
+        <div class="post-editor-library047" data-post-editor-library></div>
+      </aside>
+      <form id="postEditorForm" class="post-editor-form047">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <input type="hidden" name="post_id" value="">
+        <input type="hidden" name="action" value="save">
+        <label class="wide047">Název<input name="title"></label>
+        <div class="post-editor-grid047">
+          <label>Kanál<select name="platform">{% for v in ['facebook','instagram','linkedin','google_business','x','tiktok','blog'] %}<option value="{{ v }}">{{ providers.get(v,v) }}</option>{% endfor %}</select></label>
+          <label>Formát<input name="post_type"></label>
+        </div>
+        <label class="wide047">Text<textarea name="body" rows="9"></textarea></label>
+        <div class="post-editor-grid047">
+          <label>Hashtagy<input name="hashtags"></label>
+          <label>Termín<input type="datetime-local" name="scheduled_at"></label>
+        </div>
+        <div class="post-editor-link047 wide047">
+          <label>Cílová URL<input name="destination_url"></label>
+          <div class="post-editor-link-tools047"><span data-post-editor-link-status class="muted">Odkaz zatím nebyl ověřen.</span><button type="button" class="btn small secondary" data-post-editor-action="verify_link">Ověřit / doplnit odkaz</button></div>
+        </div>
+        <label class="wide047 post-editor-wp-category047" data-post-editor-wp-category hidden>Rubrika ve WordPressu<select name="wp_category_id"><option value="">Linda vybere automaticky</option></select><small data-post-editor-category-hint class="muted"></small></label>
+        <label class="wide047">Prompt obrázku<textarea name="image_prompt" rows="3"></textarea></label>
+        <label class="wide047 post-editor-ai047">Pokyn pro Lindu k textu <textarea name="ai_instruction" rows="2" placeholder="Volitelné: delší článek, více prodejní, stručnější, zaměřit na konkrétní službu…"></textarea><small>AI upraví pouze text. Současný obrázek zůstane zachovaný.</small></label>
+        <div class="post-editor-grid047">
+          <label>Status<select name="status">{% for v in ['draft','ready','scheduled','published','failed'] %}<option value="{{ v }}">{{ v }}</option>{% endfor %}</select></label>
+          <label>Poznámky<textarea name="notes" rows="2"></textarea></label>
+        </div>
+        <div class="post-editor-footer047">
+          <button type="submit" class="btn">Uložit</button>
+          <button type="button" class="btn secondary" data-post-editor-action="regenerate_text">Přegenerovat text s Lindou</button>
+          <button type="button" class="btn secondary" data-post-editor-action="publish">Publikovat</button>
+          <button type="button" class="btn danger" data-post-editor-action="delete">Smazat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
